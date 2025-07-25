@@ -9,11 +9,11 @@ use Spatie\LaravelData\Data;
 class GetExchangeQuotaOutputDTO extends Data implements Wireable
 {
     use WireableData;
-    
+
     public function __construct(
-        public ?string $ProhibitSendQuota = null, #XX.xGB
-        public ?string $ProhibitSendReceiveQuota = null, #XX.xGB
-        public ?string $IssueWarningQuota = null, #XX.xGB
-        
+        public ?string $ProhibitSendQuota = null, // XX.xGB
+        public ?string $ProhibitSendReceiveQuota = null, // XX.xGB
+        public ?string $IssueWarningQuota = null, // XX.xGB
+
     ) {}
 }
