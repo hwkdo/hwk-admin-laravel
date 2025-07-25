@@ -9,10 +9,10 @@ use Spatie\LaravelData\Data;
 class GetExchangePermissionOutputDTO extends Data implements Wireable
 {
     use WireableData;
-    
+
     public function __construct(
         public string $InheritanceType,
         public string $User,
-        public array $AccessRights,        
+        public array $AccessRights,
     ) {}
 }

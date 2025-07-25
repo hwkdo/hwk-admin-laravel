@@ -2,9 +2,9 @@
 
 namespace Hwkdo\HwkAdminLaravel\Tests;
 
+use Hwkdo\HwkAdminLaravel\HwkAdminLaravelServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Hwkdo\HwkAdminLaravel\HwkAdminLaravelServiceProvider;
 
 class TestCase extends Orchestra
 {

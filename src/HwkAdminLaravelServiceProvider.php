@@ -4,7 +4,8 @@ namespace Hwkdo\HwkAdminLaravel;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-#use Hwkdo\HwkAdminLaravel\Commands\HwkAdminLaravelCommand;
+
+// use Hwkdo\HwkAdminLaravel\Commands\HwkAdminLaravelCommand;
 
 class HwkAdminLaravelServiceProvider extends PackageServiceProvider
 {
@@ -18,8 +19,8 @@ class HwkAdminLaravelServiceProvider extends PackageServiceProvider
         $package
             ->name('hwk-admin-laravel')
             ->hasConfigFile();
-            #->hasViews()
-            #->hasMigration('create_hwk_admin_laravel_table')
-            #->hasCommand(HwkAdminLaravelCommand::class);
+        // ->hasViews()
+        // ->hasMigration('create_hwk_admin_laravel_table')
+        // ->hasCommand(HwkAdminLaravelCommand::class);
     }
 }
