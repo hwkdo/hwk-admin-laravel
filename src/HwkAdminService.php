@@ -2,6 +2,7 @@
 
 namespace Hwkdo\HwkAdminLaravel;
 
+use Hwkdo\HwkAdminLaravel\DTO\OcrOutputDTO;
 use Hwkdo\HwkAdminLaravel\DTO\SetExchangePermissionDTO;
 use Hwkdo\HwkAdminLaravel\DTO\SetExchangeQuotaDTO;
 use Illuminate\Support\Facades\Http;
@@ -93,5 +94,25 @@ class HwkAdminService
         }
 
         return true;
+    }
+
+    public function ocr(string $path_to_pdf) : OcrOutputDTO
+    {
+        $task = $this->getTaskByScriptName('ocr');
+        // $response = $this->client->post($this->url.'pdf/ocr', [
+        //     'file' => file_get_contents($pdfFile),
+        // ]);
+
+        $response = $this->client->attach(
+            'file',
+            file_get_contents($path_to_pdf),
+            'file.pdf',
+            ['Content-Type' => 'application/pdf']
+        )->post($this->url.'pdf/ocr');
+
+        return new OcrOutputDTO(
+            success: $response->json()['success'],
+            data: $response->json()['data']
+        );
     }
 }
