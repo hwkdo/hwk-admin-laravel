@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Hwkdo\HwkAdminLaravel\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class HwkAdminLaravelCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'hwk-admin-laravel';
 
     public $description = 'My command';
 
