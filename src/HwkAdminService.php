@@ -25,6 +25,14 @@ class HwkAdminService
         $this->outputParsingService = app(HwkAdminOutputParsingService::class);
     }
 
+    public function uploadFile($filepath)
+    {        
+        $response = $this->client
+        ->attach('file', file_get_contents($filepath), 'file')
+        ->post($this->url.'temporary-files');       
+        return $response->json();
+    }
+    
     public function getTasks()
     {
         $response = $this->client->get($this->url.'tasks');
