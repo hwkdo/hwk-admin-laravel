@@ -104,13 +104,19 @@ class HwkAdminService
         return true;
     }
 
+    /**
+     * OCR a PDF file
+     * 
+     * @param string $path_to_pdf The path to the PDF file to OCR
+     * @return OcrOutputDTO The OCR output
+     * the output is a json file with the following structure:
+     * {
+     *  "success": true,
+     *  "data": base64 encoded string of the ocr-ed pdf
+     * }
+     */
     public function ocr(string $path_to_pdf) : OcrOutputDTO
     {
-        $task = $this->getTaskByScriptName('ocr');
-        // $response = $this->client->post($this->url.'pdf/ocr', [
-        //     'file' => file_get_contents($pdfFile),
-        // ]);
-
         $response = $this->client->attach(
             'file',
             file_get_contents($path_to_pdf),
@@ -122,5 +128,15 @@ class HwkAdminService
             success: $response->json()['success'],
             data: $response->json()['data']
         );
+    }
+
+    public function ocrToLocalFile(string $path_to_pdf, string $output_path, string $output_filename) : string
+    {
+        $ocrOutput = $this->ocr($path_to_pdf);
+        if ($ocrOutput->success) {
+            file_put_contents($output_path.$output_filename, base64_decode($ocrOutput->data));
+        }
+
+        return $output_path.$output_filename;
     }
 }
