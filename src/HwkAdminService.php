@@ -52,6 +52,14 @@ class HwkAdminService
         return $response->json();
     }
 
+    public function resetEntraUserPassword($upn, $mail_empfaenger)
+    {
+        $task = $this->getTaskByScriptName('entra-password-reset');
+        $result = $this->runTask($task['id'], ['userUpn' => $upn, 'mail_empfaenger' => $mail_empfaenger]);
+
+        return $result['successful'];
+    }
+
     public function getExchangePermission($owner_upn)
     {
         $task = $this->getTaskByScriptName('exchange-permission-get');
