@@ -52,6 +52,41 @@ class HwkAdminService
         return $response->json();
     }
 
+    public function createBitwardenSend($name, $content, $maxAccessCount = null, $deleteInDays = null)
+    {
+        $task = $this->getTaskByScriptName('bitwarden-send');
+
+        $result = $this->runTask($task['id'], [
+            'secretName' => $name, 
+            'secretContent' => $content,             
+        ]);
+
+        // 'maxAccessCount' => $maxAccessCount,
+        //     'deleteInDays' => $deleteInDays
+
+        if ($result['successful']) {
+            $output = (string) ($result['output'] ?? '');
+
+            $lines = preg_split("/\r\n|\n|\r/", $output) ?: [];
+            foreach ($lines as $line) {
+                $jsonStartPos = strpos($line, '{');
+                if ($jsonStartPos === false) {
+                    continue;
+                }
+
+                $jsonPart = substr($line, $jsonStartPos);
+                $decoded = json_decode($jsonPart, true);
+
+                if (json_last_error() === JSON_ERROR_NONE && isset($decoded['accessUrl'])) {
+                    return $decoded['accessUrl'];
+                }
+            }
+
+            return $output;
+        }
+        return $result;
+    }
+
     public function resetEntraUserPassword($upn, $mail_empfaenger)
     {
         $task = $this->getTaskByScriptName('entra-password-reset');
