@@ -183,7 +183,7 @@ class HwkAdminService
         return $output_path.$output_filename;
     }
 
-    public function getGewanXml(string $vorgangsnummer) : string
+    public function getGewanXml(string $vorgangsnummer)
     {
         $task = $this->getTaskByScriptName('formwerk-hwr-antrag-self-service-gewan-xml');
 
