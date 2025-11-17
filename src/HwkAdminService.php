@@ -187,6 +187,6 @@ class HwkAdminService
     {
         $task = $this->getTaskByScriptName('formwerk-hwr-antrag-self-service-gewan-xml');
 
-        return $this->runTask($task['id'], ['vorgangsnummer' => $vorgangsnummer]);
+        return $this->runTask($task['id'], ['vorgangsnummer' => base64_encode($vorgangsnummer)]);
     }
 }
