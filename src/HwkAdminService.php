@@ -5,24 +5,46 @@ namespace Hwkdo\HwkAdminLaravel;
 use Hwkdo\HwkAdminLaravel\DTO\OcrOutputDTO;
 use Hwkdo\HwkAdminLaravel\DTO\SetExchangePermissionDTO;
 use Hwkdo\HwkAdminLaravel\DTO\SetExchangeQuotaDTO;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 class HwkAdminService
 {
     protected $url;
 
-    protected $client;
+    protected PendingRequest $client;
 
     protected $outputParsingService;
 
     public function __construct()
     {
         $this->url = config('hwk-admin-laravel.url');
-        $this->client = Http::withoutVerifying()->withHeaders([
+        $this->client = $this->makeHttpClient();
+        $this->outputParsingService = app(HwkAdminOutputParsingService::class);
+    }
+
+    /**
+     * Baut den Laravel-HTTP-Client. Ohne Zertifikatsprüfung: neben withoutVerifying()
+     * explizite cURL-Flags — in manchen Umgebungen (Docker, WSL, fehlende Intermediate-CAs)
+     * reicht allein Guzzles verify=false nicht zuverlässig.
+     */
+    protected function makeHttpClient(): PendingRequest
+    {
+        $pending = Http::withHeaders([
             'Authorization' => 'Bearer '.config('hwk-admin-laravel.token'),
             'Accept' => 'application/json',
         ]);
-        $this->outputParsingService = app(HwkAdminOutputParsingService::class);
+
+        if (! config('hwk-admin-laravel.verify_ssl')) {
+            $pending = $pending->withoutVerifying()->withOptions([
+                'curl' => [
+                    \CURLOPT_SSL_VERIFYPEER => false,
+                    \CURLOPT_SSL_VERIFYHOST => 0,
+                ],
+            ]);
+        }
+
+        return $pending;
     }
 
     public function uploadFile($filepath)
