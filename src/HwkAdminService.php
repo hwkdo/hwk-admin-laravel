@@ -48,13 +48,14 @@ class HwkAdminService
     }
 
     public function uploadFile($filepath)
-    {        
+    {
         $response = $this->client
-        ->attach('file', file_get_contents($filepath), 'file')
-        ->post($this->url.'temporary-files');       
+            ->attach('file', file_get_contents($filepath), 'file')
+            ->post($this->url.'temporary-files');
+
         return $response->json();
     }
-    
+
     public function getTasks()
     {
         $response = $this->client->get($this->url.'tasks');
@@ -78,13 +79,20 @@ class HwkAdminService
     {
         $task = $this->getTaskByScriptName('bitwarden-send');
 
-        $result = $this->runTask($task['id'], [
-            'secretName' => $name, 
-            'secretContent' => $content,             
-        ]);
+        $params = [
+            'secretName' => base64_encode((string) $name),
+            'secretContent' => base64_encode((string) $content),
+        ];
 
-        // 'maxAccessCount' => $maxAccessCount,
-        //     'deleteInDays' => $deleteInDays
+        if ($maxAccessCount !== null) {
+            $params['maxAccessCount'] = base64_encode((string) $maxAccessCount);
+        }
+
+        if ($deleteInDays !== null) {
+            $params['deleteInDays'] = base64_encode((string) $deleteInDays);
+        }
+
+        $result = $this->runTask($task['id'], $params);
 
         if ($result['successful']) {
             $output = (string) ($result['output'] ?? '');
@@ -106,6 +114,7 @@ class HwkAdminService
 
             return $output;
         }
+
         return $result;
     }
 
@@ -171,16 +180,16 @@ class HwkAdminService
 
     /**
      * OCR a PDF file
-     * 
-     * @param string $path_to_pdf The path to the PDF file to OCR
+     *
+     * @param  string  $path_to_pdf  The path to the PDF file to OCR
      * @return OcrOutputDTO The OCR output
-     * the output is a json file with the following structure:
-     * {
-     *  "success": true,
-     *  "data": base64 encoded string of the ocr-ed pdf
-     * }
+     *                      the output is a json file with the following structure:
+     *                      {
+     *                      "success": true,
+     *                      "data": base64 encoded string of the ocr-ed pdf
+     *                      }
      */
-    public function ocr(string $path_to_pdf) : OcrOutputDTO
+    public function ocr(string $path_to_pdf): OcrOutputDTO
     {
         $response = $this->client->attach(
             'file',
@@ -195,7 +204,7 @@ class HwkAdminService
         );
     }
 
-    public function ocrToLocalFile(string $path_to_pdf, string $output_path, string $output_filename) : string
+    public function ocrToLocalFile(string $path_to_pdf, string $output_path, string $output_filename): string
     {
         $ocrOutput = $this->ocr($path_to_pdf);
         if ($ocrOutput->success) {
