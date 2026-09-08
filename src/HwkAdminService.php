@@ -160,6 +160,44 @@ class HwkAdminService
         return $this->runTask($task['id'], $hwkAdminSetExchangeQuota->toArray());
     }
 
+    /**
+     * Konvertiert eine User-Mailbox zu Shared (DSR exchange-mailbox-set-shared).
+     * Parameter upn wird base64-kodiert übergeben.
+     */
+    public function setMailboxShared(string $upn): bool
+    {
+        $task = $this->getTaskByScriptName('exchange-mailbox-set-shared');
+        if (! is_array($task) || ! isset($task['id'])) {
+            return false;
+        }
+
+        $result = $this->runTask($task['id'], [
+            'upn' => base64_encode($upn),
+        ]);
+
+        return (bool) ($result['successful'] ?? false);
+    }
+
+    /**
+     * Setzt SMTP-Weiterleitung auf der Mailbox (DSR exchange-mailbox-set-forwarding).
+     * Parameter upn und forward_to_smtp werden base64-kodiert übergeben.
+     * Exchange: Set-Mailbox -ForwardingSmtpAddress -DeliverToMailboxAndForward $true
+     */
+    public function setMailboxForwarding(string $upn, string $forwardToSmtp): bool
+    {
+        $task = $this->getTaskByScriptName('exchange-mailbox-set-forwarding');
+        if (! is_array($task) || ! isset($task['id'])) {
+            return false;
+        }
+
+        $result = $this->runTask($task['id'], [
+            'upn' => base64_encode($upn),
+            'forward_to_smtp' => base64_encode($forwardToSmtp),
+        ]);
+
+        return (bool) ($result['successful'] ?? false);
+    }
+
     public function resetExchangePermission($owner_upn)
     {
         $permissions = $this->getExchangePermission($owner_upn);
